@@ -10,7 +10,7 @@ The latest release of the addon is currently compatible with **Blender 4.0.2 onw
 Supported photogrammetry libraries (data formats):
 
 - [x] [Agisoft Metashape](https://www.agisoft.com/) (VisualSfM NVM) <sup>1</sup>
-- [x] [Colmap](https://github.com/colmap/colmap) (Model folders (BIN and TXT), dense workspaces, NVM, PLY)  
+- [x] [Colmap](https://github.com/colmap/colmap)/[Glomap](https://github.com/colmap/glomap) (Model folders (BIN and TXT), dense workspaces, NVM, PLY)  
 - [x] [Meshroom](https://alicevision.github.io/) (MG, JSON, SfM, PLY)
 - [x] [MVE](https://github.com/simonfuhrmann/mve) (Workspaces) <sup>1</sup>
 - [x] [Open3D](http://www.open3d.org/) (JSON, LOG, PLY) <sup>1</sup>
