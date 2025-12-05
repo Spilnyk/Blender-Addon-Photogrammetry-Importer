@@ -31,6 +31,77 @@ class _NonReconstructedCamera(Camera):
 
     pass
 
+def _get_action_fcurves(target_obj):
+    """
+    Return an iterable of FCurves for target_obj's current action.
+
+    Works on:
+    - Blender < 4.4 / 4.4 (legacy Action.fcurves)
+    - Blender 5.x (slotted actions API with channelbags)
+    """
+    anim_data = getattr(target_obj, "animation_data", None)
+    if anim_data is None:
+        return []
+
+    action = anim_data.action
+    if action is None:
+        return []
+
+    # ---- Legacy path: Blender 4.0.x and earlier ----
+    legacy_fcurves = getattr(action, "fcurves", None)
+    if legacy_fcurves is not None:
+        return legacy_fcurves
+
+    # ---- New path: slotted actions (Blender 4.4+ / 5.x) ----
+    # Try to get the active slot; if none is set, fall back to the first slot.
+    slot = getattr(anim_data, "action_slot", None)
+    slots = getattr(action, "slots", None)
+    if slot is None and slots:
+        slot = slots[0]
+        # Make it explicit for UI / future code
+        anim_data.action_slot = slot
+
+    if slot is None:
+        return []
+
+    layers = getattr(action, "layers", None)
+    if not layers:
+        return []
+
+    # The addon only creates a single simple action via keyframe_insert(),
+    # so layer[0] / strip[0] is the one we care about.
+    layer = layers[0]
+    if not layer.strips:
+        return []
+
+    strip = layer.strips[0]
+
+    # Official API: strip.channelbag(slot) -> channelbag with .fcurves
+    try:
+        channelbag = strip.channelbag(slot)
+    except Exception:
+        # Very defensive fallback – if anything goes weird, just say "no fcurves"
+        return []
+
+    return channelbag.fcurves
+
+
+def _find_fcurve(fcurves, data_path, index):
+    """
+    Find an FCurve with the given data_path and array_index.
+
+    Works for:
+    - collections that support .find(data_path, index=...)
+    - plain iterables of FCurves.
+    """
+    if hasattr(fcurves, "find"):
+        return fcurves.find(data_path, index=index)
+
+    for fc in fcurves:
+        if fc.data_path == data_path and fc.array_index == index:
+            return fc
+    return None
+
 
 def _enhance_cameras_with_non_reconstructed_cameras(
     cameras, image_dp, image_fp_type, op=None
@@ -83,15 +154,21 @@ def _enhance_cameras_with_non_reconstructed_cameras(
 def _remove_quaternion_discontinuities(target_obj):
     # the interpolation of quaternions may lead to discontinuities
     # if the quaternions show different signs
-
     # https://blender.stackexchange.com/questions/58866/keyframe-interpolation-instability
-    action = target_obj.animation_data.action
+
+    fcurves = _get_action_fcurves(target_obj)
+    if not fcurves:
+        return
 
     # quaternion curves
-    fqw = action.fcurves.find("rotation_quaternion", index=0)
-    fqx = action.fcurves.find("rotation_quaternion", index=1)
-    fqy = action.fcurves.find("rotation_quaternion", index=2)
-    fqz = action.fcurves.find("rotation_quaternion", index=3)
+    fqw = _find_fcurve(fcurves, "rotation_quaternion", 0)
+    fqx = _find_fcurve(fcurves, "rotation_quaternion", 1)
+    fqy = _find_fcurve(fcurves, "rotation_quaternion", 2)
+    fqz = _find_fcurve(fcurves, "rotation_quaternion", 3)
+
+    # If we don’t have a complete quaternion, bail out early
+    if not all((fqw, fqx, fqy, fqz)):
+        return
 
     # invert quaternion so that interpolation takes the shortest path
     if len(fqw.keyframe_points) > 0:
@@ -117,25 +194,18 @@ def _remove_quaternion_discontinuities(target_obj):
 
             if last_quat.dot(current_quat) < 0:
                 current_quat.negate()
-                fqw.keyframe_points[i + 1].co[1] = -fqw.keyframe_points[
-                    i + 1
-                ].co[1]
-                fqx.keyframe_points[i + 1].co[1] = -fqx.keyframe_points[
-                    i + 1
-                ].co[1]
-                fqy.keyframe_points[i + 1].co[1] = -fqy.keyframe_points[
-                    i + 1
-                ].co[1]
-                fqz.keyframe_points[i + 1].co[1] = -fqz.keyframe_points[
-                    i + 1
-                ].co[1]
+                fqw.keyframe_points[i + 1].co[1] = -fqw.keyframe_points[i + 1].co[1]
+                fqx.keyframe_points[i + 1].co[1] = -fqx.keyframe_points[i + 1].co[1]
+                fqy.keyframe_points[i + 1].co[1] = -fqy.keyframe_points[i + 1].co[1]
+                fqz.keyframe_points[i + 1].co[1] = -fqz.keyframe_points[i + 1].co[1]
+
 
 
 def _set_fcurve_interpolation(some_obj, interpolation_type="LINEAR"):
     # interpolation_string: ['CONSTANT', 'LINEAR', 'BEZIER', 'SINE',
     # 'QUAD', 'CUBIC', 'QUART', 'QUINT', 'EXPO', 'CIRC',
     # 'BACK', 'BOUNCE', 'ELASTIC']
-    fcurves = some_obj.animation_data.action.fcurves
+    fcurves = _get_action_fcurves(some_obj)
     for fcurve in fcurves:
         for kf in fcurve.keyframe_points:
             kf.interpolation = interpolation_type
