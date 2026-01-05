@@ -169,13 +169,26 @@ class MeshroomFileHandler:
             #   scene_v1.2.2.json
             #   scene_v1.2.3.json
             #   scene_v1.2.4.json
+            highest_supported_alicevision_sfm_data_version = (1, 2, 5)
 
-            if alicevision_sfm_data_version >= (1, 2, 6):
-                raise NotImplementedError(
-                    f"support for alicevision sfm data version: {alicevision_sfm_data_version}"
+            if detected_alicevision_sfm_data_version >= (1, 2, 6):
+                log_report(
+                    "WARNING",
+                    f"Alice SfM data version of input file ({detected_alicevision_sfm_data_version}) is not supported.",
+                    op
+                )
+                log_report(
+                    "WARNING",
+                    f"Loading SfM data file using {highest_supported_alicevision_sfm_data_version}.",
+                    op
+                )
+                log_report(
+                    "WARNING",
+                    f"This might cause incorrect results.",
+                    op
                 )
 
-            if alicevision_sfm_data_version >= (1, 2, 2):
+            if detected_alicevision_sfm_data_version >= (1, 2, 2):
                 # Focal lenght in mm
                 focal_length_x_mm = float(intrinsic_params["focalLength"])
                 pixel_ratio = float(intrinsic_params["pixelRatio"])
@@ -188,7 +201,7 @@ class MeshroomFileHandler:
 
                 focal_length_x_px = focal_length_x_mm / width_mm * width_px
                 focal_length_y_px = focal_length_y_mm / height_mm * height_px
-            elif alicevision_sfm_data_version >= (1, 2, 0):
+            elif detected_alicevision_sfm_data_version >= (1, 2, 0):
                 # Focal lenght x and y in pixel
                 focal_length_x_px = float(intrinsic_params["pxFocalLength"][0])
                 focal_length_y_px = float(intrinsic_params["pxFocalLength"][1])
@@ -197,7 +210,7 @@ class MeshroomFileHandler:
                 focal_length_x_px = float(intrinsic_params["pxFocalLength"])
                 focal_length_y_px = focal_length_x_px
 
-            if alicevision_sfm_data_version >= (1, 2, 1):
+            if detected_alicevision_sfm_data_version >= (1, 2, 1):
                 # Principal point (in pixel) relative to the image center
                 width_px = float(intrinsic_params["width"])
                 height_px = float(intrinsic_params["height"])
