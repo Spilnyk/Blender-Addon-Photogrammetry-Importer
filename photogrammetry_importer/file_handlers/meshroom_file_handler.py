@@ -52,7 +52,7 @@ class MeshroomFileHandler:
             )
             return cams, image_index_to_camera_index
 
-        alicevision_sfm_data_version = tuple(
+        detected_alicevision_sfm_data_version = tuple(
             [int(val) for val in json_data["version"]]
         )
 
