@@ -95,38 +95,73 @@ class MeshroomFileHandler:
             )
 
             # https://github.com/alicevision/Meshroom/blob/develop/meshroom/nodes/aliceVision/CameraInit.py
-            #
-            # CameraInit.py Version 5.0
-            #   https://github.com/alicevision/Meshroom/commit/5ab6ed8e5259d49b393dfa74197494b856dd082e
-            #       - Aug 13, 2021
-            #       - focal length is now split on x and y
-            #       - sfmData version: None
-            # CameraInit.py Version 6.0
-            #   https://github.com/alicevision/Meshroom/commit/61308eb211472c772b2253ca4081f3d8060f3fab
-            #       - Aug 19, 2021
-            #       - sfmData version: 1.2.1
-            #       - Principal Point is now relative to the image center
-            #         (and not relative to the top-left image corner)
-            # CameraInit.py Version 7.0
-            #   https://github.com/alicevision/Meshroom/commit/655dad9959657301fe5e5cfd539b2d05c1f70a4d
-            #       - Mar 25, 2022
-            #       - sfmData version: 1.2.2
-            #       - parameters use focal in mm
-            # CameraInit.py Version 8.0
-            #    https://github.com/alicevision/Meshroom/commit/95bb93b4bf7fdd54906ecf5f00279de4e78a62c4
-            #       - Sep 15, 2022
-            #       - sfmData version: 1.2.2
-            #       - No semantic changes
-            # CameraInit.py Version 9.0
-            #   https://github.com/alicevision/Meshroom/commit/5b331fc13935a6630dd47aa66fccf6296069272f
-            #       - Jan 22, 2023
-            #       - sfmData version: 1.2.2
-            #       - No semantic changes
-            # CameraInit.py Version 9.0
-            #   https://github.com/alicevision/Meshroom/commit/56f77e2d52f943006227644359a5c2f14180a3bf
-            #       - Jun 28, 2023
-            #       - sfmData version: 1.2.5
-            #       - No semantic changes
+            
+            # https://github.com/alicevision/Meshroom/commit/5ab6ed8e5259d49b393dfa74197494b856dd082e
+            #   - Aug 13, 2021
+            #   - __version__ = 5.0
+            #   - sfmData version: None
+            #   - focal length is now split on x and y
+
+            # https://github.com/alicevision/Meshroom/commit/61308eb211472c772b2253ca4081f3d8060f3fab
+            #   - Aug 19, 2021
+            #   - __version__ = 6.0
+            #   - sfmData version: [1, 2, 1]
+            #   - Principal Point is now relative to the image center
+            #     (and not relative to the top-left image corner)
+
+            # https://github.com/alicevision/Meshroom/commit/655dad9959657301fe5e5cfd539b2d05c1f70a4d
+            #   - Mar 25, 2022
+            #   - __version__ = 7.0
+            #   - sfmData version: [1, 2, 2]
+            #   - parameters use focal in mm
+
+            # https://github.com/alicevision/Meshroom/commit/95bb93b4bf7fdd54906ecf5f00279de4e78a62c4
+            #   - Sep 15, 2022
+            #   - __version__ = 8.0
+            #   - sfmData version: [1, 2, 2]
+            #   - No semantic changes
+
+            # https://github.com/alicevision/Meshroom/commit/5b331fc13935a6630dd47aa66fccf6296069272f
+            #   - Jan 22, 2023
+            #   - __version__ = 9.0
+            #   - sfmData version: [1, 2, 2]
+            #   - No semantic changes
+
+            # https://github.com/alicevision/Meshroom/commit/56f77e2d52f943006227644359a5c2f14180a3bf
+            #   - Jun 28, 2023
+            #   - __version__ = "9.0"
+            #   - sfmData version: [1, 2, 5]
+            #   - No semantic changes
+
+            # https://github.com/alicevision/Meshroom/commit/11906f5b77883d711fe77ebf9cec7137b055793e
+            #   -  Nov 7, 2023
+            #   - __version__ = "9.0"
+            #   - sfmData version: [1, 2, 6]
+
+            # https://github.com/alicevision/Meshroom/commit/d8238517af20204619a09bca3f6e14807294fd82
+            #   - Mar 24, 2024
+            #   - __version__ = "9.0"
+            #   - sfmData version: [1, 2, 8]    ([1, 2, 6]->[1, 2, 8])
+
+            # https://github.com/alicevision/Meshroom/commit/dfa1f7fb79e460e447815dabfe619dd39ae6a41d
+            #   - Jun 21, 2024
+            #   - __version__ = "11.0"          ("9.0"->"11.0")
+            #   - sfmData version: [1, 2, 8]
+
+            # https://github.com/alicevision/Meshroom/commit/273906cffc40fa5cff46995a0cb1ffc04157343b
+            #   - Sep 2, 2024
+            #   - __version__ = "11.0"
+            #   - sfmData version: [1, 2, 10]   ([1, 2, 8] -> [1, 2, 10])
+
+            # https://github.com/alicevision/Meshroom/commit/2e5b730710604c3ff9a700f722a69eda54cc6b1b
+            #   - Oct 15, 2024
+            #   - __version__ = "11.0"
+            #   - sfmData version: [1, 2, 11]
+
+            # https://github.com/alicevision/Meshroom/commit/9c0938a7da3aaca063dae9bb652ef0d1b903142a
+            #   - Nov 29, 2024
+            #   - __version__ = "11.0"
+            #   - sfmData version: [1, 2, 12]
 
             # https://github.com/alicevision/AliceVision/tree/develop/src/aliceVision/sfmDataIO/compatibilityData
             #   scene_v1.2.0.json
